@@ -18,17 +18,9 @@ button{font:inherit;border:0;border-radius:10px;padding:10px 14px;cursor:pointer
 .bigformula{text-align:center;font-size:1.35em;padding:14px;background:#f6f8ff;border-radius:12px}
 input{font:inherit;padding:8px;border:1px solid #b9c4d7;border-radius:8px;width:90px}.score{font-size:1.25em;font-weight:800}
 footer{text-align:center;color:var(--muted);padding:15px}
-
-.module-nav{display:flex;justify-content:space-between;gap:12px;margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
-.module-nav button{min-width:130px}
-.backhome{position:fixed;right:16px;bottom:16px;z-index:9999;text-decoration:none;background:#182236;color:#fff;
-padding:11px 15px;border-radius:12px;font-weight:750;box-shadow:0 5px 18px #0002}
-.backhome:hover{filter:brightness(1.12)}
-
 </style>
 </head>
 <body>
-<a class="backhome" href="../">← Terug naar Vectoren</a>
 <header><div><div>Wiskunde • 3de middelbaar</div><h1>VectorLab</h1><p>Van “waarvoor dient dit?” naar zelfstandig rekenen met vectoren.</p><div class="progress"><span id="bar"></span></div>
 <nav id="nav"></nav></div></header>
 <main id="main">
@@ -106,15 +98,15 @@ padding:11px 15px;border-radius:12px;font-weight:750;box-shadow:0 5px 18px #0002
 <div class="card"><h2>Module 8 — Mini-toets</h2><p>Geen feedback per vraag. Kies je antwoorden en druk daarna op <b>Verbeter mijn toets</b>.</p>
 <form id="quiz">
 <div class="q"><b>1.</b> De drie kenmerken van een vector zijn:<br><label><input type="radio" name="q1" value="1"> richting, zin, grootte</label><br><label><input type="radio" name="q1" value="0"> plaats, kleur, lengte</label></div>
-<div class="q"><b>2.</b> <span class="vec">AB</span> + <span class="vec">BC</span> =<br><label><input type="radio" name="q2" value="1"> <span class="vec">AC</span></label><br><label><input type="radio" name="q2" value="0"> <span class="vec">CA</span></label></div>
-<div class="q"><b>3.</b> <span class="vec">AB</span> en <span class="vec">BA</span> zijn:<br><label><input type="radio" name="q3" value="1"> tegengesteld</label><br><label><input type="radio" name="q3" value="0"> gelijk</label></div>
-<div class="q"><b>4.</b> <span class="vec">PQ</span> − <span class="vec">RQ</span> =<br><label><input type="radio" name="q4" value="1"> <span class="vec">PR</span></label><br><label><input type="radio" name="q4" value="0"> <span class="vec">RP</span></label></div>
-<div class="q"><b>5.</b> <span class="vec">XY</span> + <span class="vec">YZ</span> + <span class="vec">ZX</span> =<br><label><input type="radio" name="q5" value="1"> nulvector</label><br><label><input type="radio" name="q5" value="0"> <span class="vec">XZ</span></label></div>
+<div class="q"><b>2.</b> AB + BC =<br><label><input type="radio" name="q2" value="1"> AC</label><br><label><input type="radio" name="q2" value="0"> CA</label></div>
+<div class="q"><b>3.</b> AB en BA zijn:<br><label><input type="radio" name="q3" value="1"> tegengesteld</label><br><label><input type="radio" name="q3" value="0"> gelijk</label></div>
+<div class="q"><b>4.</b> PQ − RQ =<br><label><input type="radio" name="q4" value="1"> PR</label><br><label><input type="radio" name="q4" value="0"> RP</label></div>
+<div class="q"><b>5.</b> XY + YZ + ZX =<br><label><input type="radio" name="q5" value="1"> nulvector</label><br><label><input type="radio" name="q5" value="0"> XZ</label></div>
 <div class="q"><b>6.</b> Twee even lange horizontale pijlen wijzen beide rechts. Ze stellen:<br><label><input type="radio" name="q6" value="1"> gelijke vectoren voor</label><br><label><input type="radio" name="q6" value="0"> tegengestelde vectoren voor</label></div>
-<div class="q"><b>7.</b> <span class="vec">AB</span> − <span class="vec">CB</span> =<br><label><input type="radio" name="q7" value="1"> <span class="vec">AC</span></label><br><label><input type="radio" name="q7" value="0"> <span class="vec">CA</span></label></div>
-<div class="q"><b>8.</b> <span class="vec">AB</span> + <span class="vec">BA</span> =<br><label><input type="radio" name="q8" value="1"> nulvector</label><br><label><input type="radio" name="q8" value="0"> <span class="vec">AB</span></label></div>
+<div class="q"><b>7.</b> AB − CB =<br><label><input type="radio" name="q7" value="1"> AC</label><br><label><input type="radio" name="q7" value="0"> CA</label></div>
+<div class="q"><b>8.</b> AB + BA =<br><label><input type="radio" name="q8" value="1"> nulvector</label><br><label><input type="radio" name="q8" value="0"> AB</label></div>
 <div class="q"><b>9.</b> Bij Chasles zoek je vooral naar:<br><label><input type="radio" name="q9" value="1"> een ketting van eindpunt naar beginpunt</label><br><label><input type="radio" name="q9" value="0"> vectoren met dezelfde lengte</label></div>
-<div class="q"><b>10.</b> <span class="vec">AB</span> + <span class="vec">BC</span> + <span class="vec">CD</span> =<br><label><input type="radio" name="q10" value="1"> <span class="vec">AD</span></label><br><label><input type="radio" name="q10" value="0"> <span class="vec">DA</span></label></div>
+<div class="q"><b>10.</b> AB + BC + CD =<br><label><input type="radio" name="q10" value="1"> AD</label><br><label><input type="radio" name="q10" value="0"> DA</label></div>
 <button type="button" class="primary" onclick="grade()">Verbeter mijn toets</button>
 </form><div id="result" class="score"></div><div id="advice"></div></div></section>
 
@@ -123,22 +115,9 @@ padding:11px 15px;border-radius:12px;font-weight:750;box-shadow:0 5px 18px #0002
 const mods=[...document.querySelectorAll('.module')],nav=document.getElementById('nav');
 mods.forEach((m,i)=>{let b=document.createElement('button');b.textContent=m.dataset.title;b.onclick=()=>show(i);nav.appendChild(b)});
 function show(i){mods.forEach((m,j)=>m.classList.toggle('active',i===j));[...nav.children].forEach((b,j)=>b.classList.toggle('navactive',i===j));document.getElementById('bar').style.width=((i+1)/mods.length*100)+'%';scrollTo({top:0,behavior:'smooth'})}
-function addModuleNav(){
-  mods.forEach((m,i)=>{
-    const box=document.createElement('div'); box.className='module-nav';
-    const prev=document.createElement('button');
-    prev.textContent=i===0?'← Terug naar Vectoren':'← Vorige';
-    prev.onclick=()=>{ if(i===0) location.href='../'; else show(i-1); };
-    const next=document.createElement('button'); next.className='primary';
-    next.textContent=i===mods.length-1?'Klaar → Vectoren':'Volgende →';
-    next.onclick=()=>{ if(i===mods.length-1) location.href='../'; else show(i+1); };
-    box.append(prev,next); m.querySelector('.card').appendChild(box);
-  });
-}
 function feedbackNode(btn){let q=btn.closest('.q'),e=q.querySelector('.feedback');if(!e){e=document.createElement('div');e.className='feedback';q.appendChild(e)}return e}
 function fb(btn,ok,msg){let e=feedbackNode(btn);e.className='feedback '+(ok?'ok':'bad');e.textContent=(ok?'✓ ':'↻ ')+msg}
 function num(id,val,btn,msg){let n=Number(document.getElementById(id).value);fb(btn,n===val,n===val?msg:'Nog niet. Teken de twee verplaatsingen desnoods als pijlen na elkaar.')}
 function grade(){let f=document.getElementById('quiz'),s=0,done=0;for(let i=1;i<=10;i++){let x=f.querySelector('input[name=q'+i+']:checked');if(x){done++;s+=Number(x.value)}}let r=document.getElementById('result'),a=document.getElementById('advice');if(done<10){r.textContent='Je hebt '+done+' van de 10 vragen ingevuld.';a.textContent='Vul eerst alle vragen in.';return}r.textContent='Score: '+s+'/10';a.textContent=s>=9?'Sterk: je beheerst de basis zeer goed.':s>=7?'Goed. Herbekijk vooral de vragen waarbij je twijfelde.':s>=5?'De basis groeit, maar oefen module 5–7 opnieuw.':'Herbegin bij module 2 en werk rustig opnieuw op naar Chasles–Möbius.'}
-addModuleNav();
 show(0);
 </script></body></html>
