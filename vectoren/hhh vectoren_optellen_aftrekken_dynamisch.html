@@ -1,0 +1,637 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Vectoren optellen en aftrekken</title>
+  <style>
+    :root{
+      --bg:#f5f7fb;
+      --card:#ffffff;
+      --ink:#172033;
+      --muted:#667085;
+      --line:#d9e0ea;
+      --accent:#3157d5;
+      --accent2:#6f7bf7;
+      --good:#157347;
+      --bad:#b42318;
+      --warn:#a15c00;
+      --shadow:0 12px 30px rgba(29,41,57,.10);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:linear-gradient(180deg,#eef3ff 0,#f8fafc 240px,var(--bg) 100%);
+      color:var(--ink);
+    }
+    .wrap{max-width:1100px;margin:0 auto;padding:24px 18px 48px}
+    .hero{
+      background:linear-gradient(135deg,#243b83,#5271ff);
+      color:#fff;
+      border-radius:24px;
+      padding:28px;
+      box-shadow:var(--shadow);
+      margin-bottom:20px;
+    }
+    .hero h1{margin:0 0 8px;font-size:clamp(30px,4vw,48px);line-height:1.05}
+    .hero p{margin:0;max-width:850px;font-size:1.05rem;opacity:.95}
+    .progress{margin-top:18px;height:10px;background:rgba(255,255,255,.22);border-radius:999px;overflow:hidden}
+    .progress > div{height:100%;background:#fff;width:0;transition:.25s}
+    .topline{display:flex;gap:10px;justify-content:space-between;align-items:center;flex-wrap:wrap;margin:18px 0}
+    .section-nav{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 12px;margin:0 0 8px;scrollbar-width:thin}
+    .section-nav button{flex:0 0 auto;background:#fff;color:#344054;border:1px solid var(--line);padding:9px 12px;border-radius:999px;font-size:.88rem;white-space:nowrap}
+    .section-nav button.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+    .section-nav button:hover{transform:none;background:#eef2ff}
+    .section-nav button.active:hover{background:var(--accent)}
+    .pill{background:#fff;border:1px solid var(--line);padding:8px 12px;border-radius:999px;color:var(--muted);font-size:.92rem}
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:24px;
+      margin:18px 0;
+    }
+    h2{margin-top:0;font-size:1.75rem}
+    h3{margin:24px 0 10px}
+    p,li{line-height:1.6}
+    .lead{font-size:1.08rem}
+    .rule{
+      margin:18px 0;
+      padding:16px 18px;
+      border-left:5px solid var(--accent);
+      background:#f2f5ff;
+      border-radius:12px;
+      font-weight:700;
+    }
+    .warning{border-left-color:#e28a00;background:#fff8e8}
+    .good{border-left-color:#1e8e5a;background:#edf9f2}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+    .step{border:1px solid var(--line);border-radius:14px;padding:16px;background:#fbfcff}
+    .step b{display:block;margin-bottom:6px}
+    .svgbox{background:#fbfcff;border:1px dashed #bcc7d8;border-radius:16px;padding:10px;overflow:auto}
+    svg{max-width:100%;height:auto;display:block;margin:auto}
+    .vec{font-weight:700;white-space:nowrap;display:inline-block;vertical-align:baseline}
+    .vec .sym{position:relative;display:inline-block;min-width:.7em;padding:.28em .04em 0;text-align:center;line-height:1}
+    .vec .sym::before{content:"";position:absolute;left:.02em;right:.02em;top:.08em;border-top:2px solid currentColor}
+    .vec .sym::after{content:"";position:absolute;right:-.02em;top:.01em;width:.20em;height:.20em;border-top:2px solid currentColor;border-right:2px solid currentColor;transform:rotate(45deg)}
+    .lab-status{padding:12px 14px;border-radius:12px;background:#f6f8fc;border:1px solid var(--line);font-weight:700}
+    .lab-status.ok{background:#eaf8f0;color:var(--good);border-color:#b8e4ca}
+    .lab-status.hint{background:#fff8e8;color:var(--warn);border-color:#f1d49a}
+    .choices{display:grid;gap:10px;margin-top:14px}
+    button{
+      appearance:none;border:0;border-radius:12px;padding:12px 16px;font:inherit;font-weight:700;cursor:pointer;transition:.15s;
+    }
+    button:hover{transform:translateY(-1px)}
+    .choice{background:#f6f8fc;color:var(--ink);border:1px solid var(--line);text-align:left}
+    .choice.selected{outline:3px solid #cbd5ff;background:#eef1ff}
+    .primary{background:var(--accent);color:#fff}
+    .secondary{background:#fff;color:var(--accent);border:1px solid #b7c4ff}
+    .ghost{background:#eef2f7;color:#344054}
+    .feedback{display:none;margin-top:14px;padding:12px 14px;border-radius:12px;font-weight:700}
+    .feedback.ok{display:block;background:#eaf8f0;color:var(--good);border:1px solid #b8e4ca}
+    .feedback.no{display:block;background:#fff0ef;color:var(--bad);border:1px solid #f0b8b3}
+    .nav{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:24px}
+    .nav .right{display:flex;gap:10px;flex-wrap:wrap;margin-left:auto}
+    .lesson{display:none}
+    .lesson.active{display:block}
+    .mini-score{font-size:1.1rem;font-weight:800}
+    .canvas-wrap{display:grid;grid-template-columns:1fr;gap:12px}
+    canvas{width:100%;max-width:720px;height:380px;border:1px solid var(--line);border-radius:14px;background:#fff;touch-action:none}
+    .controls{display:flex;gap:10px;flex-wrap:wrap}
+    .tag{display:inline-block;padding:4px 9px;border-radius:999px;background:#eef2ff;color:#3f51b5;font-size:.85rem;font-weight:800}
+    .small{font-size:.93rem;color:var(--muted)}
+    .center{text-align:center}
+
+    /* SVG vectornotatie: het pijltje wordt als echte SVG-lijn getekend via JS. */
+    .svg-vec-symbol{font-weight:700}
+    .hidden{display:none!important}
+    @media (max-width:640px){.card,.hero{padding:18px}.nav{flex-direction:column}.nav .right{margin-left:0}.nav button{width:100%}}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <section class="hero">
+    <div class="tag">Mini-leerlijn Vectoren</div>
+    <h1>Vectoren optellen en aftrekken</h1>
+    <p>Leer stap voor stap werken met de kop-staartmethode, de parallellogrammethode en het verschil van twee vectoren. Je krijgt uitleg, oefeningen, feedback en een mini-toets.</p>
+    <div class="progress" aria-label="voortgang"><div id="bar"></div></div>
+  </section>
+
+  <div class="topline">
+    <div class="pill" id="lessonLabel">Onderdeel 1 van 12</div>
+    <div class="pill">Tip: volg de onderdelen in volgorde</div>
+  </div>
+  <nav class="section-nav" id="sectionNav" aria-label="Onderdelen van de leerlijn"></nav>
+
+  <main id="lessons">
+    <section class="lesson active card" data-title="Vectoren verplaatsen">
+      <h2>1. Een vector mag je verplaatsen</h2>
+      <p class="lead">Een vector zit niet vast op één plaats. Je mag hem evenwijdig verschuiven zolang drie kenmerken hetzelfde blijven.</p>
+      <div class="grid">
+        <div class="step"><b>Richting</b>De vector blijft evenwijdig aan zichzelf.</div>
+        <div class="step"><b>Zin</b>De pijlpunt blijft naar dezelfde kant wijzen.</div>
+        <div class="step"><b>Grootte</b>De lengte van de pijl blijft gelijk.</div>
+      </div>
+      <div class="rule good">Zelfde richting + zelfde zin + zelfde grootte = dezelfde vector.</div>
+      <div class="svgbox">
+        <svg viewBox="0 0 760 250" role="img" aria-label="drie gelijke vectoren op verschillende plaatsen">
+          <defs><marker id="arr1" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#3157d5"/></marker></defs>
+          <line x1="90" y1="70" x2="270" y2="120" stroke="#3157d5" stroke-width="6" marker-end="url(#arr1)"/>
+          <line x1="330" y1="55" x2="510" y2="105" stroke="#3157d5" stroke-width="6" marker-end="url(#arr1)"/>
+          <line x1="430" y1="160" x2="610" y2="210" stroke="#3157d5" stroke-width="6" marker-end="url(#arr1)"/>
+          <text x="150" y="52" font-size="28" fill="#172033"><tspan class="svg-vec-symbol">a</tspan></text>
+          <text x="390" y="37" font-size="28" fill="#172033"><tspan class="svg-vec-symbol">a</tspan></text>
+          <text x="490" y="150" font-size="28" fill="#172033"><tspan class="svg-vec-symbol">a</tspan></text>
+        </svg>
+      </div>
+      <h3>Check jezelf</h3>
+      <p>Mag je een vector verschuiven zonder hem te draaien of langer/korter te maken?</p>
+      <div class="choices" data-q="q1" data-answer="0">
+        <button class="choice">Ja</button><button class="choice">Nee</button>
+      </div>
+      <div class="feedback" id="fb-q1"></div>
+    </section>
+
+    <section class="lesson card" data-title="Kop-staartmethode">
+      <h2>2. Optellen met de kop-staartmethode</h2>
+      <p>Bij <span class="vec"><span class="sym">a</span></span> + <span class="vec"><span class="sym">b</span></span> plaats je de <b>staart van de tweede vector aan de kop van de eerste vector</b>.</p>
+      <div class="grid">
+        <div class="step"><b>Stap 1</b>Teken <span class="vec"><span class="sym">a</span></span>.</div>
+        <div class="step"><b>Stap 2</b>Verplaats <span class="vec"><span class="sym">b</span></span> zodat zijn staart aan de kop van <span class="vec"><span class="sym">a</span></span> ligt.</div>
+        <div class="step"><b>Stap 3</b>Teken van het beginpunt naar het eindpunt.</div>
+      </div>
+      <div class="rule">Kop-staart: <b>START → eerste vector → tweede vector → EINDE</b>. De somvector gaat van START naar EINDE.</div>
+      <div class="svgbox">
+        <svg viewBox="0 0 760 280">
+          <defs><marker id="arr2" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#3157d5"/></marker><marker id="arr2b" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#6f7bf7"/></marker><marker id="arr2c" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#157347"/></marker></defs>
+          <circle cx="100" cy="200" r="6" fill="#172033"/><circle cx="350" cy="130" r="6" fill="#172033"/><circle cx="600" cy="70" r="6" fill="#172033"/>
+          <line x1="100" y1="200" x2="350" y2="130" stroke="#3157d5" stroke-width="6" marker-end="url(#arr2)"/>
+          <line x1="350" y1="130" x2="600" y2="70" stroke="#6f7bf7" stroke-width="6" marker-end="url(#arr2b)"/>
+          <line x1="100" y1="200" x2="600" y2="70" stroke="#157347" stroke-width="5" stroke-dasharray="10 8" marker-end="url(#arr2c)"/>
+          <text x="215" y="135" font-size="28"><tspan class="svg-vec-symbol">a</tspan></text><text x="470" y="72" font-size="28"><tspan class="svg-vec-symbol">b</tspan></text><text x="320" y="225" font-size="26" fill="#157347"><tspan class="svg-vec-symbol">a</tspan> + <tspan class="svg-vec-symbol">b</tspan></text>
+        </svg>
+      </div>
+      <h3>Oefening</h3>
+      <p>Waar plaats je bij de kop-staartmethode de staart van <span class="vec"><span class="sym">b</span></span>?</p>
+      <div class="choices" data-q="q2" data-answer="1">
+        <button class="choice">Aan de staart van a</button><button class="choice">Aan de kop van a</button><button class="choice">Aan de kop van de somvector</button>
+      </div>
+      <div class="feedback" id="fb-q2"></div>
+    </section>
+
+    <section class="lesson card" data-title="Somvector tekenen">
+      <h2>3. De resultante tekenen</h2>
+      <p>Na het verschuiven van de tweede vector teken je de somvector vanaf het <b>allereerste beginpunt</b> naar het <b>allerlaatste eindpunt</b>.</p>
+      <div class="rule good">Beginpunt van de eerste → eindpunt van de laatste = somvector.</div>
+      <p>Welke uitspraak is juist?</p>
+      <div class="choices" data-q="q3" data-answer="2">
+        <button class="choice">De somvector begint bij de tweede vector.</button>
+        <button class="choice">De somvector verbindt de twee staarten.</button>
+        <button class="choice">De somvector verbindt het eerste beginpunt met het laatste eindpunt.</button>
+      </div>
+      <div class="feedback" id="fb-q3"></div>
+    </section>
+
+    <section class="lesson card" data-title="Parallellogrammethode">
+      <h2>4. Optellen met de parallellogrammethode</h2>
+      <p>Deze methode is vooral handig als de twee vectoren vanuit hetzelfde punt vertrekken.</p>
+      <div class="grid">
+        <div class="step"><b>Stap 1</b>Teken beide vectoren vanuit hetzelfde beginpunt.</div>
+        <div class="step"><b>Stap 2</b>Trek door de kop van a een lijn evenwijdig aan b.</div>
+        <div class="step"><b>Stap 3</b>Trek door de kop van b een lijn evenwijdig aan a.</div>
+        <div class="step"><b>Stap 4</b>De diagonaal vanuit het gemeenschappelijke beginpunt is de som.</div>
+      </div>
+      <div class="svgbox">
+        <svg viewBox="0 0 760 360">
+          <defs><marker id="arr4a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#3157d5"/></marker><marker id="arr4b" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#6f7bf7"/></marker><marker id="arr4c" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#157347"/></marker></defs>
+          <line x1="120" y1="280" x2="420" y2="250" stroke="#3157d5" stroke-width="6" marker-end="url(#arr4a)"/>
+          <line x1="120" y1="280" x2="250" y2="90" stroke="#6f7bf7" stroke-width="6" marker-end="url(#arr4b)"/>
+          <line x1="250" y1="90" x2="550" y2="60" stroke="#98a2b3" stroke-width="3" stroke-dasharray="8 7"/>
+          <line x1="420" y1="250" x2="550" y2="60" stroke="#98a2b3" stroke-width="3" stroke-dasharray="8 7"/>
+          <line x1="120" y1="280" x2="550" y2="60" stroke="#157347" stroke-width="5" marker-end="url(#arr4c)"/>
+          <text x="270" y="290" font-size="28"><tspan class="svg-vec-symbol">a</tspan></text><text x="150" y="165" font-size="28"><tspan class="svg-vec-symbol">b</tspan></text><text x="330" y="155" font-size="26" fill="#157347"><tspan class="svg-vec-symbol">a</tspan> + <tspan class="svg-vec-symbol">b</tspan></text>
+        </svg>
+      </div>
+      <div class="rule warning">Let op: de juiste diagonaal begint waar a en b samen beginnen.</div>
+      <div class="choices" data-q="q4" data-answer="0">
+        <button class="choice">De diagonaal vanuit het gemeenschappelijke beginpunt.</button>
+        <button class="choice">Altijd de andere diagonaal.</button>
+        <button class="choice">Een willekeurige zijde van het parallellogram.</button>
+      </div>
+      <div class="feedback" id="fb-q4"></div>
+    </section>
+
+    <section class="lesson card" data-title="Methodes vergelijken">
+      <h2>5. Kop-staart of parallellogram?</h2>
+      <p>Beide methodes geven dezelfde somvector. De keuze hangt vooral af van hoe de vectoren getekend staan.</p>
+      <div class="grid">
+        <div class="step"><b>Kop-staart</b>Handig als je vectoren na elkaar wilt plaatsen.</div>
+        <div class="step"><b>Parallellogram</b>Handig als beide vectoren vanuit hetzelfde punt vertrekken.</div>
+      </div>
+      <div class="rule">Er is geen andere uitkomst: beide methodes stellen dezelfde som voor.</div>
+      <p>Twee vectoren vertrekken vanuit hetzelfde punt. Welke methode mag je gebruiken?</p>
+      <div class="choices" data-q="q5" data-answer="2">
+        <button class="choice">Alleen kop-staart.</button><button class="choice">Alleen parallellogram.</button><button class="choice">Beide.</button>
+      </div>
+      <div class="feedback" id="fb-q5"></div>
+    </section>
+
+    <section class="lesson card" data-title="Meerdere vectoren">
+      <h2>6. Meer dan twee vectoren optellen</h2>
+      <p>Bij drie of meer vectoren maak je gewoon een ketting: telkens komt de volgende staart aan de vorige kop.</p>
+      <div class="rule"><span class="vec"><span class="sym">a</span></span> + <span class="vec"><span class="sym">b</span></span> + <span class="vec"><span class="sym">c</span></span>: plaats <span class="vec"><span class="sym">b</span></span> na <span class="vec"><span class="sym">a</span></span>, daarna <span class="vec"><span class="sym">c</span></span> na <span class="vec"><span class="sym">b</span></span>. De resultante loopt van het eerste beginpunt naar het laatste eindpunt.</div>
+      <div class="choices" data-q="q6" data-answer="1">
+        <button class="choice">De resultante loopt van de kop van a naar de kop van c.</button>
+        <button class="choice">De resultante loopt van het eerste beginpunt naar het laatste eindpunt.</button>
+      </div>
+      <div class="feedback" id="fb-q6"></div>
+    </section>
+
+    <section class="lesson card" data-title="Tegengestelde vector">
+      <h2>7. De tegengestelde vector</h2>
+      <p>Voor aftrekken moet je eerst begrijpen wat <b>−<span class="vec"><span class="sym">b</span></span></b> betekent.</p>
+      <div class="grid">
+        <div class="step"><b>Zelfde richting</b>De drager blijft evenwijdig.</div>
+        <div class="step"><b>Zelfde grootte</b>De lengte blijft gelijk.</div>
+        <div class="step"><b>Tegengestelde zin</b>De pijlpunt wijst naar de andere kant.</div>
+      </div>
+      <div class="svgbox">
+        <svg viewBox="0 0 760 260">
+          <defs><marker id="arr7a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#3157d5"/></marker><marker id="arr7b" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#b42318"/></marker></defs>
+          <line x1="120" y1="90" x2="360" y2="90" stroke="#3157d5" stroke-width="6" marker-end="url(#arr7a)"/>
+          <line x1="600" y1="180" x2="360" y2="180" stroke="#b42318" stroke-width="6" marker-end="url(#arr7b)"/>
+          <text x="225" y="70" font-size="28"><tspan class="svg-vec-symbol">b</tspan></text><text x="455" y="160" font-size="28">−<tspan class="svg-vec-symbol">b</tspan></text>
+        </svg>
+      </div>
+      <p>Wat verandert bij de tegengestelde vector?</p>
+      <div class="choices" data-q="q7" data-answer="1">
+        <button class="choice">De grootte.</button><button class="choice">De zin.</button><button class="choice">De richting én de grootte.</button>
+      </div>
+      <div class="feedback" id="fb-q7"></div>
+    </section>
+
+    <section class="lesson card" data-title="Aftrekken = optellen met tegengestelde">
+      <h2>8. Vectoren aftrekken</h2>
+      <p>Aftrekken is geen volledig nieuwe methode. Je maakt van de tweede vector eerst de tegengestelde vector.</p>
+      <div class="rule good"><span class="vec"><span class="sym">a</span></span> − <span class="vec"><span class="sym">b</span></span> = <span class="vec"><span class="sym">a</span></span> + (−<span class="vec"><span class="sym">b</span></span>)</div>
+      <div class="grid">
+        <div class="step"><b>Stap 1</b>Vervang −b door de tegengestelde vector van b.</div>
+        <div class="step"><b>Stap 2</b>Je hebt nu een gewone optelling.</div>
+        <div class="step"><b>Stap 3</b>Gebruik kop-staart of parallellogram.</div>
+      </div>
+      <p>Welke omzetting is juist?</p>
+      <div class="choices" data-q="q8" data-answer="2">
+        <button class="choice">a − b = −a + b</button><button class="choice">a − b = a + b</button><button class="choice">a − b = a + (−b)</button>
+      </div>
+      <div class="feedback" id="fb-q8"></div>
+    </section>
+
+    <section class="lesson card" data-title="Verschilvector rechtstreeks tekenen">
+      <h2>9. Rechtstreeks tekenen bij hetzelfde beginpunt</h2>
+      <p>Vertrekken <span class="vec"><span class="sym">a</span></span> en <span class="vec"><span class="sym">b</span></span> vanuit hetzelfde punt? Dan kun je <span class="vec"><span class="sym">a</span></span> − <span class="vec"><span class="sym">b</span></span> ook rechtstreeks tekenen tussen hun eindpunten.</p>
+      <div class="rule">Voor <b><span class="vec"><span class="sym">a</span></span> − <span class="vec"><span class="sym">b</span></span></b> loopt de pijl van de <b>kop van <span class="vec"><span class="sym">b</span></span></b> naar de <b>kop van <span class="vec"><span class="sym">a</span></span></b>.</div>
+      <div class="svgbox">
+        <svg viewBox="0 0 760 340">
+          <defs><marker id="arr9a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#3157d5"/></marker><marker id="arr9b" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#6f7bf7"/></marker><marker id="arr9c" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#b42318"/></marker></defs>
+          <line x1="120" y1="280" x2="530" y2="210" stroke="#3157d5" stroke-width="6" marker-end="url(#arr9a)"/>
+          <line x1="120" y1="280" x2="270" y2="80" stroke="#6f7bf7" stroke-width="6" marker-end="url(#arr9b)"/>
+          <line x1="270" y1="80" x2="530" y2="210" stroke="#b42318" stroke-width="5" marker-end="url(#arr9c)"/>
+          <text x="320" y="265" font-size="28"><tspan class="svg-vec-symbol">a</tspan></text><text x="160" y="165" font-size="28"><tspan class="svg-vec-symbol">b</tspan></text><text x="380" y="115" font-size="26" fill="#b42318"><tspan class="svg-vec-symbol">a</tspan> − <tspan class="svg-vec-symbol">b</tspan></text>
+        </svg>
+      </div>
+      <div class="rule warning">Geheugensteuntje: bij <span class="vec"><span class="sym">a</span></span> − <span class="vec"><span class="sym">b</span></span> teken je tussen de koppen <b>b → a</b>.</div>
+      <div class="choices" data-q="q9" data-answer="1">
+        <button class="choice">Van de kop van a naar de kop van b.</button><button class="choice">Van de kop van b naar de kop van a.</button>
+      </div>
+      <div class="feedback" id="fb-q9"></div>
+    </section>
+
+    <section class="lesson card" data-title="Gemengde oefeningen">
+      <h2>10. Gemengde oefeningen</h2>
+      <p>Nu kies je zelf welke regel je nodig hebt.</p>
+      <div class="choices" data-q="q10a" data-answer="0">
+        <button class="choice">Bij a + b met hetzelfde beginpunt kan ik de parallellogrammethode gebruiken.</button>
+        <button class="choice">Bij a + b moet ik altijd aftrekken.</button>
+      </div><div class="feedback" id="fb-q10a"></div>
+      <div class="choices" style="margin-top:18px" data-q="q10b" data-answer="1">
+        <button class="choice">−b heeft dezelfde zin als b.</button>
+        <button class="choice">−b heeft dezelfde grootte maar tegengestelde zin.</button>
+      </div><div class="feedback" id="fb-q10b"></div>
+      <div class="choices" style="margin-top:18px" data-q="q10c" data-answer="2">
+        <button class="choice">a − b = a + b</button>
+        <button class="choice">a − b = −a + b</button>
+        <button class="choice">a − b = a + (−b)</button>
+      </div><div class="feedback" id="fb-q10c"></div>
+    </section>
+
+    <section class="lesson card" data-title="VectorLab — slepen en construeren">
+      <h2>11. VectorLab — zelf aanpassen, slepen en construeren</h2>
+      <p>Hier bepaal je de oefening gedeeltelijk zelf. <b>Je mag eerst de vectoren aanpassen</b>: sleep de ronde eindpunten om hun richting en grootte te veranderen. Klik daarna op <b>Start constructie</b> en voer de kop-staartmethode uit.</p>
+      <div class="rule"><b>Voor je begint:</b> sleep de <b>blauwe kop</b> om <span class="vec"><span class="sym">a</span></span> aan te passen en de <b>paarse/rode kop</b> om de tweede vector aan te passen. Daarna: <b>1.</b> plaats de tweede vector met zijn staart aan de kop van <span class="vec"><span class="sym">a</span></span>. <b>2.</b> teken zelf de resultante vanaf START.</div>
+      <div class="canvas-wrap">
+        <canvas id="lab" width="720" height="420" aria-label="Interactieve sleepoefening vectoren"></canvas>
+        <div id="labStatus" class="lab-status hint">Voorbereiden — pas eerst de vectoren aan door hun ronde eindpunten te verslepen. Klik daarna op <b>Start constructie</b>.</div>
+        <div class="controls">
+          <button class="primary" id="modeAdd">Oefen a + b</button>
+          <button class="secondary" id="modeSub">Oefen a − b</button>
+          <button class="secondary" id="startConstruct">Start constructie</button>
+          <button class="ghost" id="resetLab">Nieuwe oefening</button>
+        </div>
+      </div>
+      <div class="rule good"><b>Tip:</b> verander de vectoren gerust meerdere keren. Zo oefen je niet telkens dezelfde tekening. Bij aftrekken werk je tijdens de constructie met −<span class="vec"><span class="sym">b</span></span>: dezelfde grootte en richting als <span class="vec"><span class="sym">b</span></span>, maar met tegengestelde zin.</div>
+    </section>
+
+    <section class="lesson card" data-title="Mini-toets">
+      <h2>12. Mini-toets</h2>
+      <p>Beantwoord de vijf vragen zonder terug te kijken. Daarna krijg je je score.</p>
+      <div id="quiz"></div>
+      <button class="primary" id="gradeQuiz" style="margin-top:16px">Verbeter mini-toets</button>
+      <div id="quizResult" class="feedback"></div>
+      <div class="center" style="margin-top:22px">
+        <button class="secondary" id="restart">Herstart leerlijn</button>
+      </div>
+    </section>
+  </main>
+
+  <div class="nav">
+    <button class="ghost" id="homeBtn">← Terug naar hoofdmenu</button>
+    <div class="right">
+      <button class="secondary" id="prevBtn">← Vorige</button>
+      <button class="primary" id="nextBtn">Volgende →</button>
+    </div>
+  </div>
+</div>
+<script>
+(() => {
+  const lessons=[...document.querySelectorAll('.lesson')];
+  const sectionNav=document.getElementById('sectionNav');
+  lessons.forEach((lesson,n)=>{
+    const b=document.createElement('button');
+    b.type='button';
+    b.textContent=`${n+1}. ${lesson.dataset.title}`;
+    b.addEventListener('click',()=>show(n));
+    sectionNav.appendChild(b);
+  });
+  const sectionButtons=[...sectionNav.querySelectorAll('button')];
+  let idx=0;
+  const bar=document.getElementById('bar');
+  const label=document.getElementById('lessonLabel');
+  const prev=document.getElementById('prevBtn');
+  const next=document.getElementById('nextBtn');
+  function show(i){
+    idx=Math.max(0,Math.min(lessons.length-1,i));
+    lessons.forEach((el,n)=>el.classList.toggle('active',n===idx));
+    sectionButtons.forEach((b,n)=>b.classList.toggle('active',n===idx));
+    sectionButtons[idx]?.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+    label.textContent=`Onderdeel ${idx+1} van ${lessons.length} — ${lessons[idx].dataset.title}`;
+    bar.style.width=`${((idx+1)/lessons.length)*100}%`;
+    prev.disabled=idx===0;
+    next.textContent=idx===lessons.length-1?'Klaar':'Volgende →';
+    // SVG-tekst in verborgen lessen heeft nog geen betrouwbare afmetingen.
+    // Teken de vectorpijltjes daarom pas nadat de huidige les zichtbaar is.
+    requestAnimationFrame(()=>drawSvgVectorMarks(lessons[idx]));
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  prev.addEventListener('click',()=>show(idx-1));
+  next.addEventListener('click',()=>{ if(idx<lessons.length-1) show(idx+1); });
+  document.getElementById('restart').addEventListener('click',()=>show(0));
+  document.getElementById('homeBtn').addEventListener('click',()=>{
+    if(document.referrer){ history.back(); }
+    else { window.location.href='index.html'; }
+  });
+
+  document.querySelectorAll('.choices').forEach(group=>{
+    const answer=Number(group.dataset.answer), q=group.dataset.q;
+    const buttons=[...group.querySelectorAll('.choice')];
+    buttons.forEach((btn,i)=>btn.addEventListener('click',()=>{
+      buttons.forEach(b=>b.classList.remove('selected'));
+      btn.classList.add('selected');
+      const fb=document.getElementById('fb-'+q);
+      const ok=i===answer;
+      fb.className='feedback '+(ok?'ok':'no');
+      fb.textContent=ok?'Juist! Goed gezien.':'Nog niet juist. Bekijk de regel of tekening hierboven opnieuw.';
+    }));
+  });
+
+  const canvas=document.getElementById('lab'), ctx=canvas.getContext('2d');
+  const status=document.getElementById('labStatus');
+  const O={x:110,y:325};
+  const B0={x:490,y:300};
+  let A={x:410,y:245};
+  let second={x:B0.x,y:B0.y,dx:150,dy:-120};
+  let mode='add';
+  let interaction=null; // 'headA', 'headB', 'moveB', 'resultant'
+  let dragOffset={x:0,y:0};
+  let phase='adjust';   // adjust -> place -> result -> done
+  let resultantEnd=null;
+
+  function arrow(p1,p2,opt={}){
+    const {width=5,stroke='#172033',dash=false,label='',labelX=0,labelY=0}=opt;
+    const ang=Math.atan2(p2.y-p1.y,p2.x-p1.x);
+    ctx.save();ctx.strokeStyle=stroke;ctx.fillStyle=stroke;ctx.lineWidth=width;if(dash)ctx.setLineDash([10,8]);
+    ctx.beginPath();ctx.moveTo(p1.x,p1.y);ctx.lineTo(p2.x,p2.y);ctx.stroke();
+    const size=14;ctx.beginPath();ctx.moveTo(p2.x,p2.y);
+    ctx.lineTo(p2.x-size*Math.cos(ang-Math.PI/6),p2.y-size*Math.sin(ang-Math.PI/6));
+    ctx.lineTo(p2.x-size*Math.cos(ang+Math.PI/6),p2.y-size*Math.sin(ang+Math.PI/6));ctx.closePath();ctx.fill();ctx.restore();
+    if(label){ctx.save();ctx.fillStyle=stroke;ctx.font='bold 22px system-ui';const lx=(p1.x+p2.x)/2+labelX,ly=(p1.y+p2.y)/2+labelY;ctx.fillText(label,lx,ly);drawVectorMark(lx,ly,label,stroke);ctx.restore();}
+  }
+  function drawVectorMark(x,y,label,color){
+    ctx.save();ctx.font='bold 22px system-ui';ctx.strokeStyle=color;ctx.lineWidth=1.8;
+    let offset=0;
+    for(const ch of [...label]){
+      const w=ctx.measureText(ch).width;
+      if(/[abcuv]/i.test(ch)){
+        const left=x+offset,right=left+Math.max(12,w),yy=y-23;
+        ctx.beginPath();ctx.moveTo(left,yy);ctx.lineTo(right,yy);ctx.lineTo(right-5,yy-4);ctx.moveTo(right,yy);ctx.lineTo(right-5,yy+4);ctx.stroke();
+      }
+      offset+=w;
+    }
+    ctx.restore();
+  }
+  function dist(p,q){return Math.hypot(p.x-q.x,p.y-q.y)}
+  function clampPoint(p){return {x:Math.max(45,Math.min(675,p.x)),y:Math.max(45,Math.min(375,p.y))}}
+  function secondEnd(){return {x:second.x+second.dx,y:second.y+second.dy}}
+  function resetLab(){
+    A={x:410,y:245};
+    second={x:B0.x,y:B0.y,dx:mode==='add'?150:-150,dy:mode==='add'?-120:120};
+    phase='adjust';interaction=null;resultantEnd=null;
+    status.className='lab-status hint';
+    status.innerHTML='Voorbereiden — pas eerst de vectoren aan door hun <b>ronde eindpunten</b> te verslepen. Klik daarna op <b>Start constructie</b>.';
+    draw();
+  }
+  function startConstruction(){
+    if(phase!=='adjust') return;
+    phase='place';
+    interaction=null;resultantEnd=null;
+    status.className='lab-status hint';
+    status.innerHTML=mode==='add'
+      ? 'Stap 1/2 — Sleep nu de <b>staart</b> van <span class="vec"><span class="sym">b</span></span> naar de kop van <span class="vec"><span class="sym">a</span></span>.'
+      : 'Stap 1/2 — Sleep nu de <b>staart</b> van −<span class="vec"><span class="sym">b</span></span> naar de kop van <span class="vec"><span class="sym">a</span></span>.';
+    draw();
+  }
+  function drawHandle(p,color,filled=true){
+    ctx.save();ctx.beginPath();ctx.arc(p.x,p.y,10,0,Math.PI*2);ctx.lineWidth=3;ctx.strokeStyle=color;ctx.fillStyle='#fff';if(filled)ctx.fill();ctx.stroke();ctx.restore();
+  }
+  function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle='#fbfcff';ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.save();ctx.strokeStyle='#eef1f5';ctx.lineWidth=1;for(let x=20;x<720;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,420);ctx.stroke()}for(let y=20;y<420;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(720,y);ctx.stroke()}ctx.restore();
+    arrow(O,A,{stroke:'#3157d5',label:'a',labelY:-12});
+    ctx.fillStyle='#172033';ctx.font='18px system-ui';ctx.fillText('START',52,355);
+    const E=secondEnd(), col=mode==='add'?'#6f7bf7':'#b42318';
+    arrow({x:second.x,y:second.y},E,{stroke:col,label:mode==='add'?'b':'−b',labelY:-12});
+
+    if(phase==='adjust'){
+      drawHandle(A,'#3157d5');drawHandle(E,col);
+      ctx.fillStyle='#667085';ctx.font='15px system-ui';ctx.fillText('sleep deze kop',A.x+14,A.y-8);ctx.fillText('sleep deze kop',E.x+14,E.y-8);
+    } else if(phase==='place'){
+      ctx.beginPath();ctx.arc(second.x,second.y,10,0,Math.PI*2);ctx.fillStyle=col;ctx.fill();
+      ctx.beginPath();ctx.arc(A.x,A.y,14,0,Math.PI*2);ctx.strokeStyle='#157347';ctx.lineWidth=3;ctx.setLineDash([4,4]);ctx.stroke();ctx.setLineDash([]);
+      ctx.fillStyle='#157347';ctx.font='15px system-ui';ctx.fillText('doel',A.x-15,A.y-22);
+    } else {
+      ctx.beginPath();ctx.arc(O.x,O.y,12,0,Math.PI*2);ctx.strokeStyle='#157347';ctx.lineWidth=3;ctx.setLineDash([4,4]);ctx.stroke();ctx.setLineDash([]);
+      ctx.fillStyle='#157347';ctx.font='15px system-ui';ctx.fillText('sleep vanaf START',34,386);
+      ctx.beginPath();ctx.arc(E.x,E.y,11,0,Math.PI*2);ctx.strokeStyle='#98a2b3';ctx.lineWidth=2;ctx.stroke();
+    }
+    if(resultantEnd){
+      const good=phase==='done';
+      arrow(O,resultantEnd,{width:6,stroke:good?'#157347':'#d97706',label:good?(mode==='add'?'a+b':'a−b'):'',labelY:26});
+    }
+  }
+  function pos(evt){
+    const r=canvas.getBoundingClientRect();const t=evt.touches?evt.touches[0]:evt;
+    return {x:(t.clientX-r.left)*canvas.width/r.width,y:(t.clientY-r.top)*canvas.height/r.height};
+  }
+  function down(evt){
+    const p=pos(evt),E=secondEnd();
+    if(phase==='adjust'){
+      if(dist(p,A)<30){interaction='headA';evt.preventDefault();return;}
+      if(dist(p,E)<30){interaction='headB';evt.preventDefault();return;}
+    }
+    if(phase==='place' && dist(p,{x:second.x,y:second.y})<34){interaction='moveB';dragOffset={x:p.x-second.x,y:p.y-second.y};evt.preventDefault();return;}
+    if(phase==='result' && dist(p,O)<34){interaction='resultant';resultantEnd={...p};evt.preventDefault();return;}
+  }
+  function move(evt){
+    if(!interaction)return;
+    let p=clampPoint(pos(evt));
+    if(interaction==='headA'){
+      // voorkom een bijna nulvector
+      if(dist(p,O)>55) A=p;
+    } else if(interaction==='headB'){
+      if(dist(p,{x:second.x,y:second.y})>55){second.dx=p.x-second.x;second.dy=p.y-second.y;}
+    } else if(interaction==='moveB'){
+      second.x=p.x-dragOffset.x;second.y=p.y-dragOffset.y;
+      if(dist({x:second.x,y:second.y},A)<26){second.x=A.x;second.y=A.y;interaction=null;phase='result';status.className='lab-status hint';status.innerHTML='Goed! Stap 2/2 — teken nu zelf de resultante: sleep vanaf <b>START</b> naar de kop van de tweede vector.';}
+    } else if(interaction==='resultant') resultantEnd={...p};
+    draw();evt.preventDefault();
+  }
+  function up(){
+    if(interaction==='moveB'){
+      if(dist({x:second.x,y:second.y},A)<32){second.x=A.x;second.y=A.y;phase='result';status.className='lab-status hint';status.innerHTML='Goed! Stap 2/2 — teken nu zelf de resultante: sleep vanaf <b>START</b> naar de kop van de tweede vector.';}
+      interaction=null;draw();return;
+    }
+    if(interaction==='resultant'){
+      const target=secondEnd();
+      if(resultantEnd && dist(resultantEnd,target)<32){
+        resultantEnd={...target};phase='done';status.className='lab-status ok';
+        status.innerHTML=mode==='add'
+          ? 'Juist! Je hebt met je <b>zelfgekozen vectoren</b> de somvector <span class="vec"><span class="sym">a</span></span> + <span class="vec"><span class="sym">b</span></span> geconstrueerd.'
+          : 'Juist! Je hebt met je <b>zelfgekozen vectoren</b> <span class="vec"><span class="sym">a</span></span> − <span class="vec"><span class="sym">b</span></span> geconstrueerd als <span class="vec"><span class="sym">a</span></span> + (−<span class="vec"><span class="sym">b</span></span>).';
+      } else {resultantEnd=null;status.className='lab-status hint';status.innerHTML='Bijna. De resultante vertrekt bij START en eindigt aan de <b>kop van de tweede vector</b>. Probeer opnieuw.';}
+      interaction=null;draw();return;
+    }
+    interaction=null;draw();
+  }
+  canvas.addEventListener('mousedown',down);canvas.addEventListener('mousemove',move);window.addEventListener('mouseup',up);
+  canvas.addEventListener('touchstart',down,{passive:false});canvas.addEventListener('touchmove',move,{passive:false});canvas.addEventListener('touchend',up);
+  document.getElementById('modeAdd').onclick=()=>{mode='add';resetLab()};
+  document.getElementById('modeSub').onclick=()=>{mode='sub';resetLab()};
+  document.getElementById('startConstruct').onclick=startConstruction;
+  document.getElementById('resetLab').onclick=resetLab;
+  resetLab();
+
+  // Zet losse vectorsymbolen in vragen/knoppen/uitleg om naar dezelfde robuuste CSS-vectornotatie.
+  function vectorizeText(root=document){
+    const selector='.lesson p, .lesson .step, .lesson .rule, .lesson button.choice, .lesson .lab-status, .lesson label';
+    const elements=root.querySelectorAll ? root.querySelectorAll(selector) : [];
+    elements.forEach(el=>{
+      const walker=document.createTreeWalker(el,NodeFilter.SHOW_TEXT);
+      const nodes=[];
+      while(walker.nextNode()){
+        const n=walker.currentNode;
+        const parent=n.parentElement;
+        if(!parent || parent.closest('.vec,svg,script,style')) continue;
+        // Alleen losstaande letters die in deze cursus als vectorsymbolen gebruikt worden.
+        if(/(^|[^A-Za-zÀ-ÿ])([abcuv])(?=[^A-Za-zÀ-ÿ]|$)/i.test(n.nodeValue)) nodes.push(n);
+      }
+      nodes.forEach(n=>{
+        const frag=document.createDocumentFragment();
+        const txt=n.nodeValue;
+        const re=/(^|[^A-Za-zÀ-ÿ])([abcuv])(?=[^A-Za-zÀ-ÿ]|$)/ig;
+        let last=0,m;
+        while((m=re.exec(txt))){
+          const symStart=m.index+m[1].length;
+          if(symStart>last) frag.appendChild(document.createTextNode(txt.slice(last,symStart)));
+          const outer=document.createElement('span');outer.className='vec';
+          const inner=document.createElement('span');inner.className='sym';inner.textContent=m[2];
+          outer.appendChild(inner);frag.appendChild(outer);
+          last=symStart+1;
+          re.lastIndex=last;
+        }
+        if(last<txt.length) frag.appendChild(document.createTextNode(txt.slice(last)));
+        n.replaceWith(frag);
+      });
+    });
+  }
+
+  // Teken pijltjes boven vectorsymbolen in alle SVG-afbeeldingen.
+  function drawSvgVectorMarks(root=document){
+    root.querySelectorAll('svg .svg-vec-symbol').forEach(t=>{
+      const svg=t.ownerSVGElement;
+      if(!svg || t.dataset.arrowDone) return;
+      let b;
+      try{b=t.getBBox()}catch(e){return}
+      if(!b || b.width<=0 || b.height<=0) return;
+      const ns='http://www.w3.org/2000/svg';
+      const g=document.createElementNS(ns,'g');
+      g.setAttribute('class','svg-vector-mark');
+      g.setAttribute('pointer-events','none');
+      const y=b.y-4, x1=b.x, x2=b.x+Math.max(13,b.width);
+      const color=t.getAttribute('fill') || t.parentElement?.getAttribute('fill') || '#172033';
+      const line=document.createElementNS(ns,'path');
+      line.setAttribute('d',`M ${x1} ${y} L ${x2} ${y} M ${x2} ${y} L ${x2-5} ${y-4} M ${x2} ${y} L ${x2-5} ${y+4}`);
+      line.setAttribute('fill','none');line.setAttribute('stroke',color);line.setAttribute('stroke-width','2');line.setAttribute('stroke-linecap','round');line.setAttribute('stroke-linejoin','round');
+      g.appendChild(line);svg.appendChild(g);t.dataset.arrowDone='1';
+    });
+  }
+
+  const quizData=[
+    ['Bij kop-staart plaats je de staart van b ...',['aan de staart van a','aan de kop van a','op een willekeurige plaats'],1],
+    ['Welke diagonaal is bij het parallellogram de somvector?',['die vanuit het gemeenschappelijke beginpunt','altijd de kortste','de diagonaal tussen de koppen'],0],
+    ['Wat verandert bij −b?',['alleen de grootte','alleen de zin','richting en grootte'],1],
+    ['Welke formule klopt?',['a − b = a + (−b)','a − b = a + b','a − b = −a + b'],0],
+    ['Als a en b hetzelfde beginpunt hebben, loopt a − b rechtstreeks ...',['van kop a naar kop b','van kop b naar kop a','van het beginpunt naar kop b'],1]
+  ];
+  const quiz=document.getElementById('quiz');
+  quizData.forEach((q,qi)=>{
+    const box=document.createElement('div');box.className='step';box.style.margin='12px 0';
+    box.innerHTML=`<b>${qi+1}. ${q[0]}</b>`;
+    q[1].forEach((opt,oi)=>{const id=`mq-${qi}-${oi}`;box.insertAdjacentHTML('beforeend',`<label style="display:block;margin:8px 0"><input type="radio" name="mq${qi}" value="${oi}" id="${id}"> ${opt}</label>`)});
+    quiz.appendChild(box);
+  });
+  vectorizeText(document);
+  // SVG-vectorpijltjes worden per zichtbare les getekend via show().
+
+  document.getElementById('gradeQuiz').onclick=()=>{
+    let score=0; quizData.forEach((q,qi)=>{const c=document.querySelector(`input[name="mq${qi}"]:checked`); if(c && Number(c.value)===q[2]) score++;});
+    const r=document.getElementById('quizResult'); r.className='feedback '+(score>=4?'ok':'no');
+    r.textContent=score===5?'5/5 — Uitstekend. Je beheerst de basis van optellen en aftrekken van vectoren.':`${score}/5 — ${score>=4?'Goed gedaan.':'Bekijk vooral de onderdelen over aftrekken en de constructiemethodes nog eens.'}`;
+  };
+  show(0);
+})();
+</script>
+</body>
+</html>
