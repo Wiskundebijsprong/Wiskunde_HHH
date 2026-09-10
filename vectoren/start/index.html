@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Vectoren – van beweging naar rekenen</title>
+<style>
+:root{--bg:#f6f8fc;--card:#fff;--ink:#182033;--muted:#657089;--accent:#3157d5;--ok:#16845b;--bad:#c23b3b;--line:#dfe5f1}
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+header{background:linear-gradient(135deg,#243f9d,#5272e8);color:white;padding:34px 18px}
+header>div,main{max-width:900px;margin:auto} h1{margin:0 0 8px;font-size:clamp(28px,5vw,44px)} h2{margin-top:0}
+main{padding:22px 16px 50px}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;margin:16px 0;box-shadow:0 4px 18px #2030600c}
+.small{color:var(--muted)} .vec{display:inline-block;position:relative;padding-top:.25em;font-weight:700}.vec:before{content:"→";position:absolute;left:50%;top:-.58em;transform:translateX(-50%);font-size:.9em;font-weight:500}
+.scene{height:190px;border:1px solid var(--line);border-radius:14px;position:relative;background:linear-gradient(#eef6ff 0 68%,#e8f3df 68%);overflow:hidden}
+.person{position:absolute;left:13%;bottom:28px;font-size:45px}.target{position:absolute;right:12%;bottom:35px;font-size:38px}.arrow{position:absolute;left:28%;top:83px;width:43%;height:5px;background:var(--accent);transform-origin:left center}.arrow:after{content:"";position:absolute;right:-2px;top:-8px;border-left:17px solid var(--accent);border-top:10px solid transparent;border-bottom:10px solid transparent}
+button{font:inherit;border:0;border-radius:10px;padding:10px 14px;cursor:pointer;background:#e9edfa;color:#1e3279;margin:5px 4px 5px 0}button:hover{filter:brightness(.97)}button.primary{background:var(--accent);color:white}
+.feedback{min-height:25px;margin-top:8px;font-weight:650}.ok{color:var(--ok)}.bad{color:var(--bad)}
+.q{padding:15px 0;border-top:1px solid var(--line)}.q:first-of-type{border-top:0}.choice{display:block;width:100%;text-align:left}
+input{font:inherit;padding:9px;border:1px solid #bbc5d8;border-radius:9px;width:90px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}.fact{background:#f3f6ff;border-radius:12px;padding:14px}.example{background:#f8faff;border-left:5px solid var(--accent);border-radius:10px;padding:14px;margin:12px 0}.force-scene{height:145px;border:1px solid var(--line);border-radius:14px;position:relative;background:#fafbfe;overflow:hidden;margin:10px 0}.force-arrow{position:absolute;height:5px;background:var(--accent);transform-origin:left center}.force-arrow:after{content:"";position:absolute;right:-2px;top:-7px;border-left:15px solid var(--accent);border-top:9px solid transparent;border-bottom:9px solid transparent}.label{position:absolute;font-size:.9em;font-weight:650}
+.toc{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 18px;margin:18px auto 0;max-width:900px;box-shadow:0 4px 18px #2030600c}.toc b{display:block;margin-bottom:8px}.toc a{display:inline-block;text-decoration:none;background:#e9edfa;color:#1e3279;border-radius:9px;padding:8px 11px;margin:4px 3px}.toc a:hover{filter:brightness(.96)}html{scroll-behavior:smooth}.science{background:#f4f8ff;border:1px solid #d9e4ff;border-radius:12px;padding:14px;margin:10px 0}.future{background:#fff8e8;border-left:5px solid #d99b22;border-radius:10px;padding:14px;margin-top:14px}.page{display:none}.page.active{display:block}.page-nav{display:flex;justify-content:space-between;gap:12px;margin:22px 0}.page-nav button{min-width:130px}.toc a.active{background:var(--accent);color:white}.progress{text-align:center;color:var(--muted);font-size:.92em;margin:8px 0 2px}footer{text-align:center;color:var(--muted);padding:15px}
+</style>
+</head>
+<body>
+<header><div><div>Wiskunde • 3de middelbaar HHH</div><h1>Vectoren: waarom eigenlijk?</h1><p>Een rustige instap: eerst begrijpen, dan pas rekenen.</p></div></header>
+<nav class="toc"><b>📚 Klik op een onderdeel om er meteen naartoe te gaan:</b><a href="#beweging" onclick="showPage('beweging');return false">1. Beweging</a><a href="#krachten" onclick="showPage('krachten');return false">2. Krachten</a><a href="#vectorzien" onclick="showPage('vectorzien');return false">3. Zie de vector</a><a href="#kenmerken" onclick="showPage('kenmerken');return false">4. Kenmerken</a><a href="#optellen" onclick="showPage('optellen');return false">5. Optellen</a><a href="#chasles" onclick="showPage('chasles');return false">6. Chasles</a><a href="#waarom" onclick="showPage('waarom');return false">7. Waarom belangrijk?</a><a href="#eindcheck" onclick="showPage('eindcheck');return false">8. Eindcheck</a></nav>
+<main><div id="progress" class="progress">Onderdeel 1 van 8</div>
+<section class="card page active" id="beweging">
+<h2>1. Begin niet met letters, maar met beweging</h2>
+<p>Stel: je staat op de speelplaats en iemand zegt alleen: <b>“Ga 5 meter.”</b> Weet je dan waar je moet eindigen?</p>
+<div class="q"><button onclick="fb('f1',false,'Inderdaad: 5 meter zegt hoeveel, maar nog niet waarheen.')">Ja</button><button onclick="fb('f1',true,'Juist. Je mist nog de richting en de zin.')">Nee</button><div id="f1" class="feedback"></div></div>
+<p>Een vector kan een <b>verplaatsing</b> voorstellen, maar vectoren komen ook voor bij <b>krachten</b>, snelheid en andere grootheden. Een vector vertelt meer dan één getal.</p>
+<div class="grid"><div class="fact"><b>Richting</b><br><span class="small">bv. horizontaal, verticaal, schuin</span></div><div class="fact"><b>Zin</b><br><span class="small">bv. naar rechts of naar links</span></div><div class="fact"><b>Grootte</b><br><span class="small">bv. 5 m of 20 N</span></div></div>
+<h3>Een paar concrete voorbeelden</h3>
+<div class="example"><b>🚲 Verplaatsing.</b> Je fietst 3 km langs een rechte weg naar het oosten. Alleen “3 km” is niet genoeg: ook de richting en de zin zijn nodig.</div>
+<div class="example"><b>⚽ Een bal trappen.</b> De kracht op de bal heeft een grootte, richting en zin. Trap je even hard maar in een andere richting, dan beweegt de bal anders.</div>
+<div class="example"><b>💨 Wind.</b> “Wind van 40 km/u” vertelt nog niet alles. De richting waarin de lucht beweegt is essentieel.</div>
+<p class="small"><b>Let op:</b> bij een <b>krachtvector</b> is bovendien het <b>aangrijpingspunt</b> belangrijk: waar op het voorwerp de kracht wordt uitgeoefend.</p>
+</section>
+
+<section class="card page" id="krachten">
+<h2>2. Krachten zijn ook vectoren</h2>
+<p>Een kracht tekenen we als een pijl. De pijl toont <b>waar</b> de kracht aangrijpt, <b>in welke richting en zin</b> ze werkt en <b>hoe groot</b> ze is.</p>
+<h3>Touwtrekken</h3>
+<div class="force-scene"><div style="position:absolute;left:7%;top:42px;font-size:42px">🧍</div><div style="position:absolute;right:7%;top:42px;font-size:42px;transform:scaleX(-1)">🧍</div><div style="position:absolute;left:20%;right:20%;top:72px;border-top:5px solid #9a6a3a"></div><div class="force-arrow" style="left:48%;top:45px;width:30%;transform:rotate(180deg)"></div><div class="force-arrow" style="left:52%;top:98px;width:30%"></div><div class="label" style="left:18%;top:16px">kracht naar links</div><div class="label" style="right:14%;bottom:12px">kracht naar rechts</div></div>
+<p>Bij touwtrekken oefenen beide teams een kracht uit op het touw. De krachten kunnen <b>dezelfde richting</b> (horizontaal) maar een <b>tegengestelde zin</b> hebben. Het aangrijpingspunt ligt waar iemand aan het touw trekt.</p>
+<div class="q"><b>Vraag.</b> Beide teams trekken horizontaal met 300 N, maar in tegengestelde zin. Welke kenmerken zijn gelijk?<button class="choice" onclick="fb('fk1',true,'Juist: richting en grootte zijn gelijk, maar de zin is tegengesteld.')">Richting en grootte</button><button class="choice" onclick="fb('fk1',false,'De zin is net tegengesteld: links tegenover rechts.')">Richting, zin en grootte</button><button class="choice" onclick="fb('fk1',false,'Ook de grootte is gelijk: beide krachten zijn 300 N.')">Alleen de richting</button><div id="fk1" class="feedback"></div></div>
+<h3>De vallende appel 🍎</h3>
+<div class="force-scene"><div style="position:absolute;left:48%;top:18px;font-size:36px">🍎</div><div class="force-arrow" style="left:52%;top:58px;width:62px;transform:rotate(90deg)"></div><div class="label" style="left:58%;top:82px">zwaartekracht</div></div>
+<p>Op een vallende appel werkt de <b>zwaartekracht</b>. We stellen die voor met een vector die verticaal gericht is en naar beneden wijst. De grootte van de kracht drukken we uit in <b>newton (N)</b>.</p>
+<p>Het <b>aangrijpingspunt</b> van de zwaartekracht stellen we in eenvoudige modellen voor in het zwaartepunt van de appel. Dat punt is belangrijk: bij krachten maakt het verschil <i>waar</i> je duwt of trekt.</p>
+<div class="q"><b>Denkvraag.</b> Je duwt een deur even hard vlak bij de scharnieren of aan de deurklink. Is het effect hetzelfde?<button class="choice" onclick="fb('fk2',true,'Juist. De kracht kan even groot zijn, maar het aangrijpingspunt verandert het effect.')">Nee, het aangrijpingspunt speelt een rol</button><button class="choice" onclick="fb('fk2',false,'Denk aan een deur: aan de klink krijg je ze veel gemakkelijker aan het draaien.')">Ja, dezelfde kracht geeft altijd hetzelfde effect</button><div id="fk2" class="feedback"></div></div>
+</section>
+
+<section class="card page" id="vectorzien">
+<h2>3. Zie de vector</h2>
+<div class="scene"><div class="person">🧍</div><div class="target">🏁</div><div class="arrow"></div></div>
+<p>De pijl vertelt tegelijk <b>in welke richting</b>, <b>in welke zin</b> en <b>hoe groot</b> de verplaatsing is.</p>
+<p>Van punt A naar punt B schrijven we <span class="vec">AB</span>. Het pijltje staat bewust boven <b>AB</b>.</p>
+</section>
+
+<section class="card page" id="kenmerken">
+<h2>4. Herken de kenmerken</h2>
+<div class="q"><b>Vraag 1.</b> Twee pijlen zijn even lang en lopen allebei horizontaal. De ene wijst rechts, de andere links. Wat is hetzelfde?
+<button class="choice" onclick="fb('f2',true,'Juist: richting en grootte zijn gelijk; de zin is tegengesteld.')">Richting en grootte</button>
+<button class="choice" onclick="fb('f2',false,'Kijk opnieuw: rechts en links geven een verschillende zin.')">Richting en zin</button>
+<button class="choice" onclick="fb('f2',false,'Niet helemaal. De pijlen zijn even lang.')">Alleen de richting</button><div id="f2" class="feedback"></div></div>
+
+<div class="q"><b>Vraag 2.</b> Wanneer zijn twee vectoren gelijk?
+<button class="choice" onclick="fb('f3',true,'Perfect. Hun plaats op de tekening hoeft niet dezelfde te zijn.')">Als richting, zin én grootte gelijk zijn</button>
+<button class="choice" onclick="fb('f3',false,'De lengte alleen is onvoldoende.')">Als ze even lang zijn</button>
+<button class="choice" onclick="fb('f3',false,'Een vector mag op een andere plaats getekend staan.')">Als ze op dezelfde plaats liggen</button><div id="f3" class="feedback"></div></div>
+</section>
+
+<section class="card page" id="optellen">
+<h2>5. Waarom vectoren optellen?</h2>
+<p>Je wandelt eerst <b>4 m naar rechts</b> en daarna nog <b>3 m naar rechts</b>. De twee verplaatsingen kunnen we vervangen door één totale verplaatsing.</p>
+<div class="q">Hoe groot is die totale verplaatsing? <input id="ans1" type="number"> m <button class="primary" onclick="checkNum('ans1','f4',7,'Juist: 4 + 3 = 7 m naar rechts.')">Controleer</button><div id="f4" class="feedback"></div></div>
+<p>Dit is het idee achter <b>vectoren optellen</b>: opeenvolgende verplaatsingen vervangen door één vector.</p>
+</section>
+
+<section class="card page" id="chasles">
+<h2>6. Chasles zonder moeilijke woorden</h2>
+<p>Je gaat van <b>A naar B</b> en daarna van <b>B naar C</b>. In één beweging zou je van <b>A naar C</b> gaan.</p>
+<p style="font-size:1.35em;text-align:center"><span class="vec">AB</span> + <span class="vec">BC</span> = <span class="vec">AC</span></p>
+<div class="q"><b>Vraag.</b> Je gaat van school (S) naar de bakker (B), daarna van de bakker naar huis (H). Welke vector geeft de totale verplaatsing?
+<button onclick="fb('f5',false,'Dat is alleen de eerste verplaatsing.')"><span class="vec">SB</span></button>
+<button onclick="fb('f5',true,'Juist: beginpunt S, eindpunt H.')"><span class="vec">SH</span></button>
+<button onclick="fb('f5',false,'Dat is alleen de tweede verplaatsing.')"><span class="vec">BH</span></button><div id="f5" class="feedback"></div></div>
+</section>
+
+<section class="card page" id="waarom">
+<h2>7. Waarom zijn vectoren belangrijk?</h2>
+<p>Je zou je kunnen afvragen: <b>“Waarom leren we dit eigenlijk?”</b> Vectoren zijn een wiskundige taal om grootheden te beschrijven waarbij niet alleen de grootte, maar ook de richting en de zin belangrijk zijn.</p>
+<div class="science"><b>🔬 In de wetenschappelijke vakken</b><br>Daar kom je vectoren heel vaak tegen. In <b>fysica</b> bijvoorbeeld bij krachten, snelheid, versnelling en verplaatsing. Ook in techniek en andere wetenschappelijke toepassingen zijn vectoren een handig hulpmiddel om richting en grootte tegelijk weer te geven.</div>
+<div class="science"><b>📐 In de wiskunde</b><br>Ook in de wiskunde zijn vectoren belangrijk, vooral in de <b>meetkunde</b>. Ze helpen om verplaatsingen te beschrijven, punten en figuren met elkaar te verbinden en meetkundige relaties te onderzoeken.</div>
+<div class="future"><b>⏳ Maar nog niet alles nu!</b><br>Later dit schooljaar, <b>na de paasvakantie</b>, komen vectoren opnieuw terug bij de <b>analytische meetkunde</b>. Dan zullen jullie ook met <b>coördinaten</b> werken. <b>Dat doen we nu bewust nog niet.</b> Eerst bouwen we een stevig inzicht op in richting, zin, grootte, gelijke vectoren en het optellen van vectoren.</div>
+<div class="q"><b>Checkvraag.</b> Waarom gebruiken wetenschappers voor een kracht liever een vector dan alleen een getal zoals “200 N”?<button class="choice" onclick="fb('fw1',true,'Precies. Alleen 200 N zegt hoe groot de kracht is, maar nog niet in welke richting en zin ze werkt.')">Omdat ook richting en zin van de kracht belangrijk zijn</button><button class="choice" onclick="fb('fw1',false,'Een vector bevat net méér informatie dan alleen het getal 200 N.')">Omdat een vector korter is om te schrijven</button><div id="fw1" class="feedback"></div></div>
+<p class="small"><b>Voor nu onthouden:</b> vectoren zijn niet zomaar pijlen uit de wiskundeles. Het is een taal die je later opnieuw tegenkomt in wiskunde én zeer regelmatig in wetenschappelijke vakken.</p>
+</section>
+
+<section class="card page" id="eindcheck">
+<h2>8. Mini-eindcheck</h2>
+<div class="q"><b>A.</b> Een vector bevat informatie over…<button class="choice" onclick="fb('f6',true,'Juist.')">richting, zin en grootte</button><button class="choice" onclick="fb('f6',false,'Een vector bevat meer informatie dan alleen lengte.')">alleen grootte</button><div id="f6" class="feedback"></div></div>
+<div class="q"><b>B.</b> Waarom rekenen we met vectoren?<button class="choice" onclick="fb('f7',true,'Juist. Dat is de kern van vectorrekenen.')">Om verplaatsingen te combineren en te vergelijken</button><button class="choice" onclick="fb('f7',false,'Vectoren hebben net een concrete betekenis: ze beschrijven o.a. verplaatsingen.')">Omdat pijlen mooier zijn dan getallen</button><div id="f7" class="feedback"></div></div>
+<div class="q"><b>C.</b> Welke extra informatie is bij een kracht vaak belangrijk?<button class="choice" onclick="fb('f8',true,'Juist: waar de kracht aangrijpt kan het effect veranderen.')">Het aangrijpingspunt</button><button class="choice" onclick="fb('f8',false,'De kleur van de pijl is alleen een keuze in de tekening.')">De kleur van de pijl</button><div id="f8" class="feedback"></div></div>
+<div class="q"><b>D.</b> Een appel valt recht naar beneden. Welke zin heeft de zwaartekrachtvector?<button class="choice" onclick="fb('f9',true,'Juist: de zwaartekracht werkt naar beneden, naar de aarde toe.')">Naar beneden</button><button class="choice" onclick="fb('f9',false,'Dat is de tegengestelde zin.')">Naar boven</button><div id="f9" class="feedback"></div></div>
+<p class="small">Tip voor de leerling: probeer bij elke vector eerst in woorden te zeggen: “Ik ga van … naar …”. Daarna wordt de symboliek veel minder abstract.</p>
+</section>
+</main>
+<footer>Interactieve instap vectoren • werkt als één los HTML-bestand</footer>
+<script>
+function fb(id,ok,msg){let e=document.getElementById(id);e.className='feedback '+(ok?'ok':'bad');e.textContent=(ok?'✓ ':'↻ ')+msg}
+function checkNum(inp,id,val,msg){let n=Number(document.getElementById(inp).value);fb(id,n===val,n===val?msg:'Probeer opnieuw. Denk aan twee opeenvolgende verplaatsingen in dezelfde zin.')}
+
+const pages = ['beweging','krachten','vectorzien','kenmerken','optellen','chasles','waarom','eindcheck'];
+function showPage(id){
+  const idx=pages.indexOf(id); if(idx<0) return;
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.toc a').forEach(a=>a.classList.remove('active'));
+  const link=document.querySelector('.toc a[href="#'+id+'"]'); if(link) link.classList.add('active');
+  document.getElementById('progress').textContent='Onderdeel '+(idx+1)+' van '+pages.length;
+  history.replaceState(null,'','#'+id);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function addPageNav(){
+ pages.forEach((id,idx)=>{
+   const sec=document.getElementById(id); const nav=document.createElement('div'); nav.className='page-nav';
+   const prev=document.createElement('button'); prev.textContent=idx===0?'← Overzicht':'← Vorige'; prev.disabled=idx===0; if(idx>0) prev.onclick=()=>showPage(pages[idx-1]);
+   const next=document.createElement('button'); next.className='primary'; next.textContent=idx===pages.length-1?'Klaar ✓':'Volgende →'; if(idx<pages.length-1) next.onclick=()=>showPage(pages[idx+1]); else next.onclick=()=>showPage(pages[0]);
+   nav.append(prev,next); sec.appendChild(nav);
+ });
+}
+addPageNav();
+const start=location.hash.replace('#',''); showPage(pages.includes(start)?start:'beweging');
+</script>
+</body></html>
