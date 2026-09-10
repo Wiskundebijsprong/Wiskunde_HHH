@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VectorLab 3 – interactieve leerlijn vectoren</title>
+<style>
+:root{--bg:#f4f7fb;--card:#fff;--ink:#182236;--muted:#68758d;--blue:#315bd7;--green:#16835e;--red:#c54141;--line:#dde4f0;--soft:#edf2ff}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+header{background:linear-gradient(135deg,#203b96,#5274e8);color:#fff;padding:28px 18px}header>div,main{max-width:980px;margin:auto}
+h1{margin:0;font-size:clamp(28px,5vw,46px)}header p{margin:6px 0 0}.progress{height:10px;background:#ffffff40;border-radius:10px;margin-top:18px;overflow:hidden}.progress span{display:block;height:100%;width:12.5%;background:#fff;transition:.3s}
+nav{display:flex;gap:7px;overflow:auto;padding:12px 0 3px}nav button{white-space:nowrap}
+main{padding:16px 16px 55px}.module{display:none}.module.active{display:block}.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px;margin:14px 0;box-shadow:0 4px 18px #1d2f620b}
+button{font:inherit;border:0;border-radius:10px;padding:10px 14px;cursor:pointer;background:#e8edfa;color:#263b82;margin:4px 3px 4px 0}button:hover{filter:brightness(.97)}button.primary{background:var(--blue);color:white}.navactive{background:#fff;color:#1e368c;font-weight:700}
+.vec{display:inline-block;position:relative;padding-top:.22em;font-weight:700;margin:0 .08em}.vec:before{content:"→";position:absolute;left:50%;top:-.58em;transform:translateX(-50%);font-size:.85em;font-weight:500}
+.q{padding:16px 0;border-top:1px solid var(--line)}.q:first-of-type{border-top:0}.choice{display:block;width:100%;text-align:left}.feedback{min-height:24px;font-weight:650;margin-top:7px}.ok{color:var(--green)}.bad{color:var(--red)}.hint{color:#7a5b16}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:11px}.fact{padding:14px;background:var(--soft);border-radius:12px}.small{color:var(--muted)}
+.demo{border:1px solid var(--line);border-radius:14px;padding:16px;background:#fbfcff}.svgwrap{width:100%;overflow:auto}svg{max-width:100%;height:auto}
+.bigformula{text-align:center;font-size:1.35em;padding:14px;background:#f6f8ff;border-radius:12px}
+input{font:inherit;padding:8px;border:1px solid #b9c4d7;border-radius:8px;width:90px}.score{font-size:1.25em;font-weight:800}
+footer{text-align:center;color:var(--muted);padding:15px}
+
+.module-nav{display:flex;justify-content:space-between;gap:12px;margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
+.module-nav button{min-width:130px}
+.backhome{position:fixed;right:16px;bottom:16px;z-index:9999;text-decoration:none;background:#182236;color:#fff;
+padding:11px 15px;border-radius:12px;font-weight:750;box-shadow:0 5px 18px #0002}
+.backhome:hover{filter:brightness(1.12)}
+
+</style>
+</head>
+<body>
+<a class="backhome" href="../">← Terug naar Vectoren</a>
+<header><div><div>Wiskunde • 3de middelbaar</div><h1>VectorLab</h1><p>Van “waarvoor dient dit?” naar zelfstandig rekenen met vectoren.</p><div class="progress"><span id="bar"></span></div>
+<nav id="nav"></nav></div></header>
+<main id="main">
+
+<section class="module active" data-title="1 · Waarom?">
+<div class="card"><h2>Module 1 — Waarom vectoren?</h2><p>Een getal zegt soms niet genoeg. Bij een <b>verplaatsing</b> willen we weten hoeveel én waarheen.</p>
+<div class="q"><b>1.</b> Een trainer zegt: “Loop 8 meter.” Is je eindpunt daarmee volledig bepaald?
+<button class="choice" onclick="fb(this,false,'Nog niet: je weet niet in welke richting en zin.')">Ja</button><button class="choice" onclick="fb(this,true,'Juist. 8 m geeft alleen de grootte.')">Nee</button></div>
+<div class="q"><b>2.</b> Welke opdracht is het duidelijkst?
+<button class="choice" onclick="fb(this,true,'Juist: grootte én waarheen zijn bepaald.')">Ga 5 m horizontaal naar rechts.</button><button class="choice" onclick="fb(this,false,'Je mist nog informatie over waarheen.')">Ga 5 m.</button></div>
+<div class="grid"><div class="fact"><b>Richting</b><br>horizontaal, verticaal, schuin…</div><div class="fact"><b>Zin</b><br>rechts/links, boven/onder…</div><div class="fact"><b>Grootte</b><br>de lengte van de vector</div></div>
+<p>Een vector bundelt die drie gegevens in één pijl.</p></div></section>
+
+<section class="module" data-title="2 · Kenmerken">
+<div class="card"><h2>Module 2 — Richting, zin en grootte</h2><div class="demo svgwrap"><svg viewBox="0 0 700 170">
+<defs><marker id="a" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#315bd7"/></marker></defs>
+<line x1="80" y1="45" x2="280" y2="45" stroke="#315bd7" stroke-width="5" marker-end="url(#a)"/><text x="165" y="28">u</text>
+<line x1="80" y1="115" x2="280" y2="115" stroke="#315bd7" stroke-width="5" marker-end="url(#a)"/><text x="165" y="98">v</text>
+<line x1="590" y1="80" x2="390" y2="80" stroke="#315bd7" stroke-width="5" marker-end="url(#a)"/><text x="485" y="63">w</text></svg></div>
+<div class="q"><b>1.</b> u en v hebben…<button class="choice" onclick="fb(this,true,'Juist: zelfde richting, zin en grootte.')">dezelfde richting, zin en grootte</button><button class="choice" onclick="fb(this,false,'Kijk naar richting, pijlpunt én lengte.')">alleen dezelfde grootte</button></div>
+<div class="q"><b>2.</b> u en w hebben…<button class="choice" onclick="fb(this,true,'Juist: ze zijn horizontaal en even lang, maar wijzen tegengesteld.')">dezelfde richting en grootte, tegengestelde zin</button><button class="choice" onclick="fb(this,false,'Horizontaal is hun richting; rechts/links is hun zin.')">dezelfde zin</button></div>
+<div class="q"><b>3.</b> Kan een vector op een andere plaats getekend worden en toch dezelfde vector voorstellen?<button onclick="fb(this,true,'Ja. De plaats is geen kenmerk van een vrije vector.')">Ja</button><button onclick="fb(this,false,'De plaats is niet één van de drie kenmerken.')">Nee</button></div>
+</div></section>
+
+<section class="module" data-title="3 · Gelijk/tegengesteld">
+<div class="card"><h2>Module 3 — Gelijke en tegengestelde vectoren</h2>
+<p><b>Gelijk:</b> zelfde richting + zelfde zin + zelfde grootte.<br><b>Tegengesteld:</b> zelfde richting + zelfde grootte + tegengestelde zin.</p>
+<div class="q"><b>1.</b> Als <span class="vec">AB</span> naar rechts wijst, wat is <span class="vec">BA</span>?<button class="choice" onclick="fb(this,true,'Juist: begin- en eindpunt wisselen, dus de zin keert om.')">De tegengestelde vector</button><button class="choice" onclick="fb(this,false,'AB en BA hebben een tegengestelde zin.')">Dezelfde vector</button></div>
+<div class="q"><b>2.</b> Vul in: <span class="vec">AB</span> = − … <button onclick="fb(this,true,'Juist: AB = −BA.')"><span class="vec">BA</span></button><button onclick="fb(this,false,'Denk: wissel begin- en eindpunt.')"><span class="vec">AB</span></button></div>
+<div class="q"><b>3.</b> Twee even lange, evenwijdige pijlen wijzen beide naar links. Zijn de vectoren gelijk?<button onclick="fb(this,true,'Ja: richting, zin en grootte zijn gelijk.')">Ja</button><button onclick="fb(this,false,'Controleer de drie kenmerken.')">Nee</button></div>
+<div class="q"><b>4.</b> Twee pijlen wijzen naar rechts, maar één is dubbel zo lang. Gelijk?<button onclick="fb(this,false,'Juist gedacht: hun grootte verschilt.')">Ja</button><button onclick="fb(this,true,'Juist. Gelijke vectoren moeten ook dezelfde grootte hebben.')">Nee</button></div>
+</div></section>
+
+<section class="module" data-title="4 · Optellen">
+<div class="card"><h2>Module 4 — Vectoren optellen</h2><p>Vectoren optellen betekent: <b>verplaatsingen na elkaar uitvoeren</b>.</p>
+<div class="q"><b>1.</b> 4 m rechts en daarna 3 m rechts. Totale verplaatsing? <input id="n1" type="number"> m <button onclick="num('n1',7,this,'7 m naar rechts.')">Controleer</button></div>
+<div class="q"><b>2.</b> 8 m rechts en daarna 3 m links. Netto grootte? <input id="n2" type="number"> m <button onclick="num('n2',5,this,'Juist: 5 m naar rechts.')">Controleer</button></div>
+<div class="q"><b>3.</b> Waarom mogen we niet altijd gewoon de lengtes optellen?<button class="choice" onclick="fb(this,true,'Juist. De zin en richting beïnvloeden de resultante.')">Omdat vectoren ook richting en zin hebben.</button><button class="choice" onclick="fb(this,false,'Vectorrekenen gaat net over meer dan gewone lengtes.')">Omdat vectoren geen lengte hebben.</button></div>
+<div class="q"><b>4.</b> Een vector gevolgd door zijn tegengestelde geeft…<button class="choice" onclick="fb(this,true,'Juist: je eindigt waar je begon. Dit is de nulvector.')">de nulvector</button><button class="choice" onclick="fb(this,false,'Denk aan 5 m rechts en daarna 5 m links.')">een dubbel zo grote vector</button></div>
+</div></section>
+
+<section class="module" data-title="5 · Chasles–Möbius">
+<div class="card"><h2>Module 5 — Chasles–Möbius</h2><p>Eerst het beeld: <b>A → B → C</b> is samen <b>A → C</b>.</p>
+<div class="bigformula"><span class="vec">AB</span> + <span class="vec">BC</span> = <span class="vec">AC</span></div>
+<p class="small">Zoek bij Chasles naar een “ketting”: het eindpunt van de eerste vector is het beginpunt van de volgende.</p>
+<div class="q"><b>1.</b> Vereenvoudig <span class="vec">PQ</span> + <span class="vec">QR</span>.<button class="choice" onclick="fb(this,true,'Juist: P → Q → R wordt P → R.')"><span class="vec">PR</span></button><button class="choice" onclick="fb(this,false,'Volg de route vanaf P.')"><span class="vec">RP</span></button></div>
+<div class="q"><b>2.</b> <span class="vec">AB</span> + <span class="vec">BC</span> + <span class="vec">CD</span> = ?<button class="choice" onclick="fb(this,true,'Juist: A → B → C → D wordt A → D.')"><span class="vec">AD</span></button><button class="choice" onclick="fb(this,false,'Begin bij A en volg alle tussenpunten.')"><span class="vec">DA</span></button></div>
+<div class="q"><b>3.</b> Welke vector moet erbij? <span class="vec">AB</span> + ? = <span class="vec">AC</span><button onclick="fb(this,true,'Juist: B is het tussenpunt.')"><span class="vec">BC</span></button><button onclick="fb(this,false,'De eerste vector eindigt in B; daar moet de volgende starten.')"><span class="vec">CB</span></button></div>
+<div class="q"><b>4.</b> <span class="vec">BA</span> + <span class="vec">AC</span> = ?<button onclick="fb(this,true,'Juist: B → A → C = B → C.')"><span class="vec">BC</span></button><button onclick="fb(this,false,'Lees letterlijk: van B naar A, daarna A naar C.')"><span class="vec">CB</span></button></div>
+<div class="q"><b>5.</b> <span class="vec">AB</span> + <span class="vec">BA</span> = ?<button onclick="fb(this,true,'Juist: je gaat heen en terug.')">nulvector</button><button onclick="fb(this,false,'A → B → A eindigt waar het begon.')"><span class="vec">AA</span> met lengte AB</button></div>
+</div></section>
+
+<section class="module" data-title="6 · Rekenen">
+<div class="card"><h2>Module 6 — Rekenen en herschrijven</h2><p>Werk niet op goed geluk. <b>Keer zo nodig een vector om</b> en maak daarna een ketting.</p>
+<div class="q"><b>1.</b> <span class="vec">AB</span> − <span class="vec">CB</span> = ?<p class="small">Hint: −<span class="vec">CB</span> = <span class="vec">BC</span>.</p><button onclick="fb(this,true,'Juist: AB − CB = AB + BC = AC.')"><span class="vec">AC</span></button><button onclick="fb(this,false,'Vervang eerst −CB door BC.')"><span class="vec">CA</span></button></div>
+<div class="q"><b>2.</b> <span class="vec">PQ</span> − <span class="vec">RQ</span> = ?<button onclick="fb(this,true,'Juist: PQ + QR = PR.')"><span class="vec">PR</span></button><button onclick="fb(this,false,'−RQ wordt QR.')"><span class="vec">RP</span></button></div>
+<div class="q"><b>3.</b> <span class="vec">AB</span> + <span class="vec">CD</span> + <span class="vec">BC</span> kan je herschikken. Welke resultante krijg je?<button onclick="fb(this,true,'Juist: AB + BC + CD = AD.')"><span class="vec">AD</span></button><button onclick="fb(this,false,'Zet de vectoren eerst in kettingvolgorde.')"><span class="vec">DA</span></button></div>
+<div class="q"><b>4.</b> <span class="vec">XY</span> + <span class="vec">YZ</span> + <span class="vec">ZX</span> = ?<button onclick="fb(this,true,'Juist: je maakt een gesloten route.')">nulvector</button><button onclick="fb(this,false,'X → Y → Z → X: waar eindig je?')"><span class="vec">XZ</span></button></div>
+<div class="q"><b>5.</b> Wat is de veiligste strategie bij een minteken?<button class="choice" onclick="fb(this,true,'Juist: daarna kan je opnieuw naar een ketting zoeken.')">Maak er + van en keer de vector om.</button><button class="choice" onclick="fb(this,false,'Een minteken verandert de zin van de vector.')">Negeer het minteken en pas Chasles toe.</button></div>
+</div></section>
+
+<section class="module" data-title="7 · Oefenen">
+<div class="card"><h2>Module 7 — Gemengde oefenreeks</h2><p>Probeer eerst zonder hulp. Bij een fout krijg je een gerichte aanwijzing.</p>
+<div class="q"><b>1.</b> <span class="vec">MN</span> + <span class="vec">NP</span> = ?<button onclick="fb(this,true,'Correct: MP.')"><span class="vec">MP</span></button><button onclick="fb(this,false,'Start bij M en volg N.')"><span class="vec">PM</span></button></div>
+<div class="q"><b>2.</b> <span class="vec">KL</span> − <span class="vec">ML</span> = ?<button onclick="fb(this,true,'Correct: KL + LM = KM.')"><span class="vec">KM</span></button><button onclick="fb(this,false,'Keer eerst ML om.')"><span class="vec">MK</span></button></div>
+<div class="q"><b>3.</b> <span class="vec">AB</span> + <span class="vec">BC</span> + <span class="vec">CA</span> = ?<button onclick="fb(this,true,'Correct: gesloten ketting = nulvector.')">nulvector</button><button onclick="fb(this,false,'Volg A → B → C → A.')"><span class="vec">AC</span></button></div>
+<div class="q"><b>4.</b> Zijn <span class="vec">AB</span> en <span class="vec">BA</span> gelijk?<button onclick="fb(this,false,'Ze hebben een tegengestelde zin.')">Ja</button><button onclick="fb(this,true,'Correct: ze zijn tegengesteld.')">Nee</button></div>
+<div class="q"><b>5.</b> Welke eigenschap is géén kenmerk van een vector?<button onclick="fb(this,true,'Juist: de plaats op het blad is geen kenmerk.')">plaats op het blad</button><button onclick="fb(this,false,'Grootte is wel een kenmerk.')">grootte</button><button onclick="fb(this,false,'Zin is wel een kenmerk.')">zin</button></div>
+<div class="q"><b>6.</b> <span class="vec">RS</span> + <span class="vec">ST</span> + <span class="vec">TU</span> = ?<button onclick="fb(this,true,'Correct: RU.')"><span class="vec">RU</span></button><button onclick="fb(this,false,'Volg de volledige ketting vanaf R.')"><span class="vec">UR</span></button></div>
+<div class="q"><b>7.</b> <span class="vec">AB</span> − <span class="vec">DB</span> = ?<button onclick="fb(this,true,'Correct: AB + BD = AD.')"><span class="vec">AD</span></button><button onclick="fb(this,false,'−DB = BD.')"><span class="vec">DA</span></button></div>
+<div class="q"><b>8.</b> Waarom is <span class="vec">AB</span> + <span class="vec">BC</span> niet <span class="vec">BA</span>?<button class="choice" onclick="fb(this,true,'Juist: de totale route start in A en eindigt in C.')">Omdat de resultante van A naar C loopt.</button><button class="choice" onclick="fb(this,false,'De letters beschrijven begin- en eindpunt, niet een gewone letterbewerking.')">Omdat B twee keer voorkomt.</button></div>
+</div></section>
+
+<section class="module" data-title="8 · Mini-toets">
+<div class="card"><h2>Module 8 — Mini-toets</h2><p>Geen feedback per vraag. Kies je antwoorden en druk daarna op <b>Verbeter mijn toets</b>.</p>
+<form id="quiz">
+<div class="q"><b>1.</b> De drie kenmerken van een vector zijn:<br><label><input type="radio" name="q1" value="1"> richting, zin, grootte</label><br><label><input type="radio" name="q1" value="0"> plaats, kleur, lengte</label></div>
+<div class="q"><b>2.</b> <span class="vec">AB</span> + <span class="vec">BC</span> =<br><label><input type="radio" name="q2" value="1"> <span class="vec">AC</span></label><br><label><input type="radio" name="q2" value="0"> <span class="vec">CA</span></label></div>
+<div class="q"><b>3.</b> <span class="vec">AB</span> en <span class="vec">BA</span> zijn:<br><label><input type="radio" name="q3" value="1"> tegengesteld</label><br><label><input type="radio" name="q3" value="0"> gelijk</label></div>
+<div class="q"><b>4.</b> <span class="vec">PQ</span> − <span class="vec">RQ</span> =<br><label><input type="radio" name="q4" value="1"> <span class="vec">PR</span></label><br><label><input type="radio" name="q4" value="0"> <span class="vec">RP</span></label></div>
+<div class="q"><b>5.</b> <span class="vec">XY</span> + <span class="vec">YZ</span> + <span class="vec">ZX</span> =<br><label><input type="radio" name="q5" value="1"> nulvector</label><br><label><input type="radio" name="q5" value="0"> <span class="vec">XZ</span></label></div>
+<div class="q"><b>6.</b> Twee even lange horizontale pijlen wijzen beide rechts. Ze stellen:<br><label><input type="radio" name="q6" value="1"> gelijke vectoren voor</label><br><label><input type="radio" name="q6" value="0"> tegengestelde vectoren voor</label></div>
+<div class="q"><b>7.</b> <span class="vec">AB</span> − <span class="vec">CB</span> =<br><label><input type="radio" name="q7" value="1"> <span class="vec">AC</span></label><br><label><input type="radio" name="q7" value="0"> <span class="vec">CA</span></label></div>
+<div class="q"><b>8.</b> <span class="vec">AB</span> + <span class="vec">BA</span> =<br><label><input type="radio" name="q8" value="1"> nulvector</label><br><label><input type="radio" name="q8" value="0"> <span class="vec">AB</span></label></div>
+<div class="q"><b>9.</b> Bij Chasles zoek je vooral naar:<br><label><input type="radio" name="q9" value="1"> een ketting van eindpunt naar beginpunt</label><br><label><input type="radio" name="q9" value="0"> vectoren met dezelfde lengte</label></div>
+<div class="q"><b>10.</b> <span class="vec">AB</span> + <span class="vec">BC</span> + <span class="vec">CD</span> =<br><label><input type="radio" name="q10" value="1"> <span class="vec">AD</span></label><br><label><input type="radio" name="q10" value="0"> <span class="vec">DA</span></label></div>
+<button type="button" class="primary" onclick="grade()">Verbeter mijn toets</button>
+</form><div id="result" class="score"></div><div id="advice"></div></div></section>
+
+</main><footer>VectorLab • interactieve leerlijn vectoren • één zelfstandig HTML-bestand</footer>
+<script>
+const mods=[...document.querySelectorAll('.module')],nav=document.getElementById('nav');
+mods.forEach((m,i)=>{let b=document.createElement('button');b.textContent=m.dataset.title;b.onclick=()=>show(i);nav.appendChild(b)});
+function show(i){mods.forEach((m,j)=>m.classList.toggle('active',i===j));[...nav.children].forEach((b,j)=>b.classList.toggle('navactive',i===j));document.getElementById('bar').style.width=((i+1)/mods.length*100)+'%';scrollTo({top:0,behavior:'smooth'})}
+function addModuleNav(){
+  mods.forEach((m,i)=>{
+    const box=document.createElement('div'); box.className='module-nav';
+    const prev=document.createElement('button');
+    prev.textContent=i===0?'← Terug naar Vectoren':'← Vorige';
+    prev.onclick=()=>{ if(i===0) location.href='../'; else show(i-1); };
+    const next=document.createElement('button'); next.className='primary';
+    next.textContent=i===mods.length-1?'Klaar → Vectoren':'Volgende →';
+    next.onclick=()=>{ if(i===mods.length-1) location.href='../'; else show(i+1); };
+    box.append(prev,next); m.querySelector('.card').appendChild(box);
+  });
+}
+function feedbackNode(btn){let q=btn.closest('.q'),e=q.querySelector('.feedback');if(!e){e=document.createElement('div');e.className='feedback';q.appendChild(e)}return e}
+function fb(btn,ok,msg){let e=feedbackNode(btn);e.className='feedback '+(ok?'ok':'bad');e.textContent=(ok?'✓ ':'↻ ')+msg}
+function num(id,val,btn,msg){let n=Number(document.getElementById(id).value);fb(btn,n===val,n===val?msg:'Nog niet. Teken de twee verplaatsingen desnoods als pijlen na elkaar.')}
+function grade(){let f=document.getElementById('quiz'),s=0,done=0;for(let i=1;i<=10;i++){let x=f.querySelector('input[name=q'+i+']:checked');if(x){done++;s+=Number(x.value)}}let r=document.getElementById('result'),a=document.getElementById('advice');if(done<10){r.textContent='Je hebt '+done+' van de 10 vragen ingevuld.';a.textContent='Vul eerst alle vragen in.';return}r.textContent='Score: '+s+'/10';a.textContent=s>=9?'Sterk: je beheerst de basis zeer goed.':s>=7?'Goed. Herbekijk vooral de vragen waarbij je twijfelde.':s>=5?'De basis groeit, maar oefen module 5–7 opnieuw.':'Herbegin bij module 2 en werk rustig opnieuw op naar Chasles–Möbius.'}
+addModuleNav();
+show(0);
+</script></body></html>
